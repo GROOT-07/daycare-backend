@@ -46,5 +46,6 @@ app.get("/export", (req, res) => {
   res.setHeader("Content-Disposition", "attachment; filename=bookings.csv");
   res.send(csv);
 });
+console.log("RENDER DEPLOY TEST – VERSION 3");
 
 app.listen(process.env.PORT || 5000);
