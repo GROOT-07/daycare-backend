@@ -2,34 +2,49 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
+import cors from "cors";
 
-/* Middlewares */
-app.use(cors());
+app.use(cors({
+  origin: [
+    "https://daycare-frontend-kappa.vercel.app"
+  ],
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"]
+}));
+
+app.use(express.json());
 app.use(express.json());
 
-/* ROOT HEALTH CHECK */
+let bookings = [];
+
 app.get("/", (req, res) => {
-  res.status(200).send("Geriatric Daycare Backend is LIVE 🚀");
+  res.send("Geriatric Daycare Backend Running");
 });
 
-/* BOOK SLOT */
 app.post("/book", (req, res) => {
-  console.log("POST /book hit", req.body);
+  const { date, time, name, age, phone } = req.body;
 
-  res.status(200).json({
-    success: true,
-    message: "Booking received",
-    data: req.body
-  });
+  if (!date || !time || !name || !phone) {
+    return res.status(400).json({ message: "Missing fields" });
+  }
+
+  bookings.push({ date, time, name, age, phone });
+  res.json({ message: "Booked successfully" });
 });
 
-/* EXPORT (placeholder) */
+app.get("/bookings", (req, res) => {
+  res.json(bookings);
+});
+
 app.get("/export", (req, res) => {
-  res.status(200).json({ message: "Export route working" });
+  let csv = "Date,Time,Name,Age,Phone\n";
+  bookings.forEach(b => {
+    csv += `${b.date},${b.time},${b.name},${b.age},${b.phone}\n`;
+  });
+
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader("Content-Disposition", "attachment; filename=bookings.csv");
+  res.send(csv);
 });
 
-/* START SERVER */
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(process.env.PORT || 5000);
