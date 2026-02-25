@@ -1,8 +1,9 @@
+console.log("RENDER FINAL FIX – COMMONJS MODE");
+
 const express = require("express");
 const cors = require("cors");
 
 const app = express();
-import cors from "cors";
 
 app.use(cors({
   origin: [
@@ -12,7 +13,6 @@ app.use(cors({
   allowedHeaders: ["Content-Type"]
 }));
 
-app.use(express.json());
 app.use(express.json());
 
 let bookings = [];
@@ -46,6 +46,5 @@ app.get("/export", (req, res) => {
   res.setHeader("Content-Disposition", "attachment; filename=bookings.csv");
   res.send(csv);
 });
-console.log("RENDER DEPLOY TEST – VERSION 3");
 
 app.listen(process.env.PORT || 5000);
